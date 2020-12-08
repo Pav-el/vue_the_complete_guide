@@ -22,7 +22,7 @@
         <div class="healthbar">
           <div
             class="healthbar__value"
-            :class="{ isWeak: checkHealth(monsterHealth) }"
+            :class="{ isWeak: healthIsLessThanLimit(monsterHealth) }"
             :style="monsterBarAnimation"
           >
             {{ monsterHealth }}
@@ -34,7 +34,7 @@
         <div class="healthbar">
           <div
             class="healthbar__value"
-            :class="{ isWeak: checkHealth(playerHealth) }"
+            :class="{ isWeak: healthIsLessThanLimit(playerHealth) }"
             :style="playerBarAnimation"
           >
             {{ playerHealth }}
@@ -47,17 +47,25 @@
         <h3 v-if="playerWin">You won!</h3>
         <button @click="resetGame">Play again?</button>
       </section>
-      <section id="controls">
+      <section id="controls" v-else>
         <button @click="attackMonster">ATTACK</button>
-        <button :disabled="specialAttackIsDisabled" @click="specilaAttackMonster">SPECIAL ATTACK</button>
+        <button
+          :disabled="specialAttackIsDisabled"
+          @click="specilaAttackMonster"
+        >
+          SPECIAL ATTACK
+        </button>
         <button @click="healPlayer">HEAL</button>
-        <button>SURRENDER</button>
+        <button @click="surrender">SURRENDER</button>
       </section>
       <section id="log" class="container">
         <h2>Battle Log</h2>
-        <ul></ul>
+        <ul>
+          <li v-for="message in logMessages">
+            {{message.actionBy}} {{message.actionType}} {{message.actionValue}}
+          </li>
+        </ul>
       </section>
     </div>
   </body>
 </html>
-
