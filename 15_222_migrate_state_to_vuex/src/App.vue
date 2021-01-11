@@ -10,26 +10,6 @@ export default {
   components: {
     TheHeader,
   },
-  data() {
-    return {
-      isLoggedIn: false,
-    };
-  },
-  provide() {
-    return {
-      isLoggedIn: this.isLoggedIn,
-      login: this.login,
-      logout: this.logout,
-    };
-  },
-  methods: {
-    login() {
-      this.isLoggedIn = true;
-    },
-    logout() {
-      this.isLoggedIn = false;
-    },
-  },
 };
 </script>
 
@@ -45,4 +25,9 @@ html {
 body {
   margin: 0;
 }
+
+:active {
+  outline: none;
+}
+
 </style>
