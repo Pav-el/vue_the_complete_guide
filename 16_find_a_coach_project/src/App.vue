@@ -8,7 +8,7 @@ import TheHeader from "./layouts/TheHeader.vue";
 export default {
   components: { TheHeader },
   created() {
-    this.$store.dispatch("updateStore");
+    this.$store.dispatch("coaches/updateStore");
   },
 };
 </script>

@@ -4,8 +4,8 @@ import requestsStore from "./modules/requests.js";
 
 const store = createStore({
   modules: {
-    coachesStore,
-    requestsStore,
+    coaches: coachesStore,
+    requests: requestsStore,
   },
   state() {
     return {

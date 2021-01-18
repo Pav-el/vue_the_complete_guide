@@ -1,19 +1,32 @@
 export default class DataService {
   databaseUrl =
-    "https://find-a-coach-pro-default-rtdb.europe-west1.firebasedatabase.app/coaches.json";
+    "https://find-a-coach-pro-default-rtdb.europe-west1.firebasedatabase.app/";
 
-  getData = async () => {
-    const res = await fetch(this.databaseUrl);
+  getData = async (targetDB) => {
+    const url = this.databaseUrl + targetDB + ".json";
+    const res = await fetch(url);
     if (!res.ok) {
       throw new Error(
-        `Could not fetch ${this.databaseUrl}, received ${res.status}`
+        `Could not fetch ${url}, received ${res.status}`
       );
     }
     return await res.json();
   };
 
-  sendData = async (data) => {
-    const res = await fetch(this.databaseUrl, {
+  getDataById = async (id) => {
+    const url = this.databaseUrl + "coaches/" + id + "/.json";
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(
+        `Could not fetch ${url}, received ${res.status}`
+      );
+    }
+    return await res.json();
+  };
+
+  sendData = async (data, targetDB) => {
+    const url = this.databaseUrl + targetDB + ".json";
+    const res = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -21,8 +34,8 @@ export default class DataService {
       body: JSON.stringify(data),
     });
     if (res.ok) {
-      console.log("Coach saved");
-      return res
+      console.log("Saved in ", targetDB);
+      return res;
     } else {
       throw new Error("Could not save data");
     }

@@ -38,15 +38,15 @@ export default {
   components: { CoachItem, CoachFilter },
   data() {
     return {
-      coaches: this.$store.getters.coaches,
+      coaches: this.$store.getters['coaches/coaches'],
     };
   },
   computed: {
     hasCoaches() {
-      return this.$store.getters.hasCoaches;
+      return this.$store.getters['coaches/hasCoaches'];
     },
     isCoach() {
-      return this.$store.getters.isCoach;
+      return this.$store.getters['coaches/isCoach'];
     },
   },
   methods: {
@@ -54,7 +54,7 @@ export default {
       const activeFilters = Object.keys(filters).filter(
         (key) => filters[key] === true
       );
-      this.coaches = this.$store.getters.coaches.filter((coach) => {
+      this.coaches = this.$store.getters['coaches/coaches'].filter((coach) => {
         for (let i = 0; i < activeFilters.length; i++) {
           if (!coach.areas.includes(activeFilters[i])) {
             return false;
@@ -64,7 +64,7 @@ export default {
       });
     },
     updateStore() {
-      this.$store.dispatch('updateStore')
+      this.$store.dispatch('coaches/updateStore')
     }
   },
 };

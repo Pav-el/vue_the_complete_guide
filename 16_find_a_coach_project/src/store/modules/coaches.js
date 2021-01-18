@@ -3,6 +3,7 @@ import DataService from "../../services/dataService.js";
 const dataService = new DataService();
 
 const coachesStore = {
+  namespaced: true,
   state() {
     return {
       coaches: [],
@@ -16,10 +17,10 @@ const coachesStore = {
     cleanStore(state) {
       state.coaches = [];
     },
-    setloadingToTrue(state) {
+    setLoadingToTrue(state) {
       state.isLoading = true;
     },
-    setloadingToFalse(state) {
+    setLoadingToFalse(state) {
       state.isLoading = false;
     },
   },
@@ -30,23 +31,20 @@ const coachesStore = {
     cleanStore(context) {
       context.commit("cleanStore");
     },
-    setloadingToTrue(context) {
-      context.commit("setloadingToTrue");
+    setLoadingToTrue(context) {
+      context.commit("setLoadingToTrue");
     },
-    setloadingToFalse(context) {
-      context.commit("setloadingToFalse");
+    setLoadingToFalse(context) {
+      context.commit("setLoadingToFalse");
     },
     async updateStore(context) {
-      context.dispatch("setloadingToTrue");
-      console.log('Coaches store loading is', context.state.isLoading)
+      context.dispatch("setLoadingToTrue");
       context.dispatch("cleanStore");
-      const coachList = await dataService.getData();
+      const coachList = await dataService.getData("coaches");
       Object.keys(coachList).forEach((key) =>
         context.dispatch("addCoachToStore", { ...coachList[key], id: key })
       );
-      console.log("Coaches store coachList is: ",coachList);
-      context.dispatch("setloadingToFalse");
-      console.log('Coaches store loading is', context.state.isLoading)
+      context.dispatch("setLoadingToFalse");
     },
   },
   getters: {

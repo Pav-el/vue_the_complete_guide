@@ -22,7 +22,7 @@
         <p>{{ description }}</p>
       </BaseCard>
     </section>
-    <section>
+    <section v-if="!contactDialogIsOpen">
       <BaseCard>
         <header>
           <h2>Interested? Reach out now!</h2>
@@ -34,35 +34,35 @@
       </BaseCard>
     </section>
   </section>
-  <section>
+  <section v-if="contactDialogIsOpen">
     <router-view></router-view>
   </section>
 </template>
 
 <script>
+import DataService from "../../services/dataService.js";
+const dataService = new DataService();
+
 export default {
   props: ["id"],
   data() {
     return {
+      isLoading: true,
       selectedCoach: null,
+      contactDialogIsOpen: false,
     };
   },
-  watch: {
-    isLoading(value) {
-      if (value === false) {
-        this.selectCoach();
-      }
-    },
-  },
   created() {
-    if (!this.isLoading) {
-      this.selectCoach();
-    }
+    dataService
+      .getDataById(this.id)
+      .then((res) => (this.selectedCoach = res))
+      .then(() => (this.isLoading = false));
+  },
+  beforeUpdate() {
+    this.contactDialogIsOpen =
+      this.$route.path === "/coaches/" + this.id + "/contact";
   },
   computed: {
-    isLoading() {
-      return this.$store.getters.isLoading;
-    },
     areas() {
       return this.selectedCoach.areas;
     },
@@ -77,13 +77,6 @@ export default {
     },
     contactLink() {
       return `${this.id}/contact`;
-    },
-  },
-  methods: {
-    selectCoach() {
-      this.selectedCoach = this.$store.getters.coaches.find(
-        (coach) => coach.id === this.id
-      );
     },
   },
 };
