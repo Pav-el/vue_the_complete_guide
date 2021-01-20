@@ -1,38 +1,47 @@
 <template>
-  <BaseSpinner v-if="isLoading" />
-  <section v-else>
-    <section>
-      <BaseCard>
-        <h2>{{ fullName }}</h2>
-        <h3>${{ rate }}/hour</h3>
-      </BaseCard>
+  <div>
+    <BaseDialog
+      :show="!!error"
+      title="An error occurred"
+      @close="handleError"
+    >
+      <p>{{error}}</p>
+    </BaseDialog>
+    <BaseSpinner v-if="isLoading" />
+    <section v-else>
+      <section>
+        <BaseCard>
+          <h2>{{ fullName }}</h2>
+          <h3>${{ rate }}/hour</h3>
+        </BaseCard>
+      </section>
+      <section>
+        <BaseCard>
+          <BaseBadge
+            v-for="area in areas"
+            :key="area"
+            :type="area"
+            :title="area"
+          ></BaseBadge>
+          <p>{{ description }}</p>
+        </BaseCard>
+      </section>
+      <section v-if="!contactDialogIsOpen">
+        <BaseCard>
+          <header>
+            <h2>Interested? Reach out now!</h2>
+            <BaseButton
+              link
+              :to="contactLink"
+            >Contact</BaseButton>
+          </header>
+        </BaseCard>
+      </section>
     </section>
-    <section>
-      <BaseCard>
-        <BaseBadge
-          v-for="area in areas"
-          :key="area"
-          :type="area"
-          :title="area"
-        ></BaseBadge>
-        <p>{{ description }}</p>
-      </BaseCard>
+    <section v-if="contactDialogIsOpen">
+      <router-view></router-view>
     </section>
-    <section v-if="!contactDialogIsOpen">
-      <BaseCard>
-        <header>
-          <h2>Interested? Reach out now!</h2>
-          <BaseButton
-            link
-            :to="contactLink"
-          >Contact</BaseButton>
-        </header>
-      </BaseCard>
-    </section>
-  </section>
-  <section v-if="contactDialogIsOpen">
-    <router-view></router-view>
-  </section>
+  </div>
 </template>
 
 <script>
@@ -43,16 +52,14 @@ export default {
   props: ["id"],
   data() {
     return {
+      error: null,
       isLoading: true,
       selectedCoach: null,
       contactDialogIsOpen: false,
     };
   },
   created() {
-    dataService
-      .getDataById("coaches", this.id)
-      .then((res) => (this.selectedCoach = res))
-      .then(() => (this.isLoading = false));
+    this.getSelectedCoachDetails(this.id);
   },
   beforeUpdate() {
     this.contactDialogIsOpen =
@@ -73,6 +80,19 @@ export default {
     },
     contactLink() {
       return `${this.id}/contact`;
+    },
+  },
+  methods: {
+    async getSelectedCoachDetails(id) {
+      try {
+        this.selectedCoach = await dataService.getDataById("coaches", id);
+        this.isLoading = false;
+      } catch (error) {
+        this.error = error.message || "Something went wrong!";
+      }
+    },
+    handleError() {
+      this.error = null;
     },
   },
 };

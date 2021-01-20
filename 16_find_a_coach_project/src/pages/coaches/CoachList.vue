@@ -1,37 +1,46 @@
 <template>
-  <CoachFilter @change-filter="setFilters" />
-  <section>
-    <BaseCard>
-      <div class="controls">
-        <BaseButton
-          mode="outline"
-          @click="updateStore"
-        >
-          Refresh
-        </BaseButton>
-        <BaseButton
-          v-if="!isCoach"
-          link
-          to="/register"
-        >
-          Register as a Coach
-        </BaseButton>
-      </div>
-      <ul v-if="hasCoaches">
-        <CoachItem
-          v-for="item in filteredCoaches"
-          :key="item.id"
-          :id="item.id"
-          :firstName="item.firstName"
-          :lastName="item.lastName"
-          :areas="item.areas"
-          :hourlyRate="item.hourlyRate"
-        />
-      </ul>
-      <BaseSpinner v-else-if="isLoading" />
-      <h3 v-else>No coaches found.</h3>
-    </BaseCard>
-  </section>
+  <div>
+    <BaseDialog
+      :show="!!error"
+      title="An error occurred"
+      @close="handleError"
+    >
+      <p>{{error}}</p>
+    </BaseDialog>
+    <CoachFilter @change-filter="setFilters" />
+    <section v-if="!error">
+      <BaseCard>
+        <div class="controls">
+          <BaseButton
+            mode="outline"
+            @click="updateStore(true)"
+          >
+            Refresh
+          </BaseButton>
+          <BaseButton
+            v-if="!isCoach"
+            link
+            to="/register"
+          >
+            Register as a Coach
+          </BaseButton>
+        </div>
+        <ul v-if="hasCoaches">
+          <CoachItem
+            v-for="item in filteredCoaches"
+            :key="item.id"
+            :id="item.id"
+            :firstName="item.firstName"
+            :lastName="item.lastName"
+            :areas="item.areas"
+            :hourlyRate="item.hourlyRate"
+          />
+        </ul>
+        <BaseSpinner v-else-if="isLoading" />
+        <h3 v-else>No coaches found.</h3>
+      </BaseCard>
+    </section>
+  </div>
 </template>
 
 <script>
@@ -41,6 +50,7 @@ export default {
   components: { CoachItem, CoachFilter },
   data() {
     return {
+      error: null,
       filteredList: [],
     };
   },
@@ -59,7 +69,7 @@ export default {
     },
     isLoading() {
       return this.$store.getters["coaches/isLoading"];
-    }
+    },
   },
   created() {
     this.updateStore();
@@ -78,8 +88,15 @@ export default {
         return true;
       });
     },
-    updateStore() {
-      this.$store.dispatch("coaches/updateStore");
+    async updateStore(forced = false) {
+      try {
+        await this.$store.dispatch("coaches/updateStore", forced);
+      } catch (error) {
+        this.error = error.message || "Something went wrong!";
+      }
+    },
+    handleError() {
+      this.error = null;
     },
   },
 };

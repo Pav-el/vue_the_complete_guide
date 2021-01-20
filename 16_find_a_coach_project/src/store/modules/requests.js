@@ -38,19 +38,19 @@ const requestsStore = {
       context.commit("setLoadingToFalse");
     },
     async updateStore(context) {
-      context.dispatch("setLoadingToTrue");
-      context.dispatch("cleanStore");
+      context.commit("setLoadingToTrue");
+      context.commit("cleanStore");
       const id = context.rootGetters.userId;
       const requestsList = await dataService.getDataById("requests", id);
       if (requestsList) {
         Object.keys(requestsList).forEach((key) =>
-          context.dispatch("addRequestToStore", {
+          context.commit("addRequestToStore", {
             ...requestsList[key],
             id: key,
           })
         );
       }
-      context.dispatch("setLoadingToFalse");
+      context.commit("setLoadingToFalse");
     },
   },
   getters: {

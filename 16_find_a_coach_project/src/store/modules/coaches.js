@@ -6,6 +6,7 @@ const coachesStore = {
   namespaced: true,
   state() {
     return {
+      lastFetch: null,
       coaches: [],
       isLoading: true,
     };
@@ -23,6 +24,9 @@ const coachesStore = {
     setLoadingToFalse(state) {
       state.isLoading = false;
     },
+    setFecthTimestamp(state) {
+      state.lastFetch = new Date().getTime();
+    },
   },
   actions: {
     addCoachToStore(context, data) {
@@ -37,16 +41,20 @@ const coachesStore = {
     setLoadingToFalse(context) {
       context.commit("setLoadingToFalse");
     },
-    async updateStore(context) {
-      context.dispatch("setLoadingToTrue");
-      context.dispatch("cleanStore");
-      const coachList = await dataService.getData("coaches");
+    async updateStore(context, forcedRefresh) {
+      if (!context.getters.shouldUpdate && !forcedRefresh) {
+        return;
+      }
+      context.commit("setLoadingToTrue");
+      context.commit("cleanStore");
+      const coachList = await dataService.getCoaches();
       if (coachList) {
         Object.keys(coachList).forEach((key) =>
-          context.dispatch("addCoachToStore", { ...coachList[key], id: key })
+          context.commit("addCoachToStore", { ...coachList[key], id: key })
         );
       }
-      context.dispatch("setLoadingToFalse");
+      context.commit("setLoadingToFalse");
+      context.commit("setFecthTimestamp");
     },
   },
   getters: {
@@ -63,6 +71,14 @@ const coachesStore = {
     },
     isLoading(state) {
       return state.isLoading;
+    },
+    shouldUpdate(state) {
+      const lastFetch = state.lastFetch;
+      if (!lastFetch) {
+        return true;
+      }
+      const currentTimestamp = new Date().getTime();
+      return (currentTimestamp - lastFetch) / 1000 > 60;
     },
   },
 };
