@@ -1,9 +1,5 @@
 <template>
-  <section v-if="isLoading">
-    <BaseCard>
-      Loading
-    </BaseCard>
-  </section>
+  <BaseSpinner v-if="isLoading" />
   <section v-else>
     <section>
       <BaseCard>
@@ -54,7 +50,7 @@ export default {
   },
   created() {
     dataService
-      .getDataById(this.id)
+      .getDataById("coaches", this.id)
       .then((res) => (this.selectedCoach = res))
       .then(() => (this.isLoading = false));
   },

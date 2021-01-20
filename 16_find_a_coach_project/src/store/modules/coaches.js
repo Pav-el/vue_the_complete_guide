@@ -41,9 +41,11 @@ const coachesStore = {
       context.dispatch("setLoadingToTrue");
       context.dispatch("cleanStore");
       const coachList = await dataService.getData("coaches");
-      Object.keys(coachList).forEach((key) =>
-        context.dispatch("addCoachToStore", { ...coachList[key], id: key })
-      );
+      if (coachList) {
+        Object.keys(coachList).forEach((key) =>
+          context.dispatch("addCoachToStore", { ...coachList[key], id: key })
+        );
+      }
       context.dispatch("setLoadingToFalse");
     },
   },

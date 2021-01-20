@@ -1,10 +1,12 @@
 <template>
-  <h1>Coach List</h1>
   <CoachFilter @change-filter="setFilters" />
   <section>
     <BaseCard>
       <div class="controls">
-        <BaseButton mode="outline" @click="updateStore">
+        <BaseButton
+          mode="outline"
+          @click="updateStore"
+        >
           Refresh
         </BaseButton>
         <BaseButton
@@ -17,7 +19,7 @@
       </div>
       <ul v-if="hasCoaches">
         <CoachItem
-          v-for="item in coaches"
+          v-for="item in filteredCoaches"
           :key="item.id"
           :id="item.id"
           :firstName="item.firstName"
@@ -26,6 +28,7 @@
           :hourlyRate="item.hourlyRate"
         />
       </ul>
+      <BaseSpinner v-else-if="isLoading" />
       <h3 v-else>No coaches found.</h3>
     </BaseCard>
   </section>
@@ -38,23 +41,35 @@ export default {
   components: { CoachItem, CoachFilter },
   data() {
     return {
-      coaches: this.$store.getters['coaches/coaches'],
+      filteredList: [],
     };
   },
   computed: {
+    coaches() {
+      return this.$store.getters["coaches/coaches"];
+    },
+    filteredCoaches() {
+      return this.filteredList.length > 0 ? this.filteredList : this.coaches;
+    },
     hasCoaches() {
-      return this.$store.getters['coaches/hasCoaches'];
+      return this.$store.getters["coaches/hasCoaches"];
     },
     isCoach() {
-      return this.$store.getters['coaches/isCoach'];
+      return this.$store.getters["coaches/isCoach"];
     },
+    isLoading() {
+      return this.$store.getters["coaches/isLoading"];
+    }
+  },
+  created() {
+    this.updateStore();
   },
   methods: {
     setFilters(filters) {
       const activeFilters = Object.keys(filters).filter(
         (key) => filters[key] === true
       );
-      this.coaches = this.$store.getters['coaches/coaches'].filter((coach) => {
+      this.filteredList = this.coaches.filter((coach) => {
         for (let i = 0; i < activeFilters.length; i++) {
           if (!coach.areas.includes(activeFilters[i])) {
             return false;
@@ -64,8 +79,8 @@ export default {
       });
     },
     updateStore() {
-      this.$store.dispatch('coaches/updateStore')
-    }
+      this.$store.dispatch("coaches/updateStore");
+    },
   },
 };
 </script>

@@ -50,20 +50,20 @@ export default {
   methods: {
     submitData() {
       const data = {
-        coachId: this.id,
         userName: this.userName,
         userEmail: this.userEmail,
         userMessage: this.userMessage,
       };
       dataService
-        .sendData(data, "requests")
+        .addRequest(data, this.id)
         .then(() => {
           this.submitted = true;
           this.resetState();
-          setTimeout(() => (this.submitted = false), 2000);
-          this.$store.dispatch("requests/updateStore");
+          setTimeout(() => {
+            this.submitted = false;
+            // this.$router.replace("/coaches");
+          }, 2000);
         })
-        .then(() => this.$router.replace("/coaches"));
     },
     resetState() {
       this.userName = "";

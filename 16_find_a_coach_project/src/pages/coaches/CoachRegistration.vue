@@ -16,8 +16,7 @@ export default {
   methods: {
     saveData(data) {
       dataService
-        .sendData(data, "coaches")
-        .then(() => this.$store.dispatch("coaches/updateStore"))
+        .addCoach(data, "coaches")
         .then(() => this.$router.replace("/coaches"));
     },
   },

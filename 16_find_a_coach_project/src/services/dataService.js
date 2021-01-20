@@ -6,26 +6,31 @@ export default class DataService {
     const url = this.databaseUrl + targetDB + ".json";
     const res = await fetch(url);
     if (!res.ok) {
-      throw new Error(
-        `Could not fetch ${url}, received ${res.status}`
-      );
+      throw new Error(`Could not fetch ${url}, received ${res.status}`);
     }
     return await res.json();
   };
 
-  getDataById = async (id) => {
-    const url = this.databaseUrl + "coaches/" + id + "/.json";
+  getDataById = async (targetDB, id) => {
+    const url = this.databaseUrl + targetDB + "/" + id + ".json";
     const res = await fetch(url);
     if (!res.ok) {
-      throw new Error(
-        `Could not fetch ${url}, received ${res.status}`
-      );
+      throw new Error(`Could not fetch ${url}, received ${res.status}`);
     }
     return await res.json();
   };
 
-  sendData = async (data, targetDB) => {
-    const url = this.databaseUrl + targetDB + ".json";
+  addRequest = async (data, id) => {
+    const url = this.databaseUrl + "requests/" + id + ".json";
+    return await this.postData(url, data);
+  };
+
+  addCoach = async (data) => {
+    const url = this.databaseUrl + "coaches.json";
+    return await this.postData(url, data);
+  };
+
+  postData = async (url, data) => {
     const res = await fetch(url, {
       method: "POST",
       headers: {
@@ -34,7 +39,7 @@ export default class DataService {
       body: JSON.stringify(data),
     });
     if (res.ok) {
-      console.log("Saved in ", targetDB);
+      console.log("Saved in ", url);
       return res;
     } else {
       throw new Error("Could not save data");

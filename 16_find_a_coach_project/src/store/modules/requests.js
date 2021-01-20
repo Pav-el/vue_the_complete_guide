@@ -40,10 +40,16 @@ const requestsStore = {
     async updateStore(context) {
       context.dispatch("setLoadingToTrue");
       context.dispatch("cleanStore");
-      const requestsList = await dataService.getData("requests");
-      Object.keys(requestsList).forEach((key) =>
-        context.dispatch("addRequestToStore", { ...requestsList[key], id: key })
-      );
+      const id = context.rootGetters.userId;
+      const requestsList = await dataService.getDataById("requests", id);
+      if (requestsList) {
+        Object.keys(requestsList).forEach((key) =>
+          context.dispatch("addRequestToStore", {
+            ...requestsList[key],
+            id: key,
+          })
+        );
+      }
       context.dispatch("setLoadingToFalse");
     },
   },
@@ -51,13 +57,8 @@ const requestsStore = {
     requests(state) {
       return state.requests;
     },
-    hasRequestes(state) {
+    hasRequests(state) {
       return state.requests && state.requests.length > 0;
-    },
-    isRequest(_, getters, _2, rootGetters) {
-      const requests = getters.requests;
-      const userId = rootGetters.userId;
-      return requests.some((request) => request.id === userId);
     },
     isLoading(state) {
       return state.isLoading;

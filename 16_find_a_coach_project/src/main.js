@@ -5,11 +5,13 @@ import router from "./router.js";
 import BaseCard from "./ui/BaseCard.vue";
 import BaseBadge from "./ui/BaseBadge.vue";
 import BaseButton from "./ui/BaseButton.vue";
+import BaseSpinner from "./ui/BaseSpinner.vue";
 
 const app = createApp(App);
 app.component("BaseCard", BaseCard);
 app.component("BaseBadge", BaseBadge);
 app.component("BaseButton", BaseButton);
+app.component("BaseSpinner", BaseSpinner);
 app.use(router);
 app.use(store);
 app.mount("#app");
