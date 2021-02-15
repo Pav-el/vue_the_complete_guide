@@ -37,11 +37,12 @@ const requestsStore = {
     setLoadingToFalse(context) {
       context.commit("setLoadingToFalse");
     },
-    async updateStore(context) {
+    async updateStore(context, token) {
       context.commit("setLoadingToTrue");
       context.commit("cleanStore");
       const id = context.rootGetters.userId;
-      const requestsList = await dataService.getDataById("requests", id);
+      console.log('id is :', id);
+      const requestsList = await dataService.getRequests(id, token);
       if (requestsList) {
         Object.keys(requestsList).forEach((key) =>
           context.commit("addRequestToStore", {

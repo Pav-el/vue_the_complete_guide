@@ -18,11 +18,18 @@
             Refresh
           </BaseButton>
           <BaseButton
-            v-if="!isCoach"
+            v-if="!isCoach&&isAuthenticated"
             link
             to="/register"
           >
             Register as a Coach
+          </BaseButton>
+          <BaseButton
+            v-if="!isAuthenticated"
+            link
+            to="/auth?redirect=register"
+          >
+            Login to Register as a Coach
           </BaseButton>
         </div>
         <ul v-if="hasCoaches">
@@ -70,8 +77,12 @@ export default {
     isLoading() {
       return this.$store.getters["coaches/isLoading"];
     },
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
+    },
   },
   created() {
+    //true, чтоб обновлялся при каждом создании ( в тч, добавлении нового тернера)
     this.updateStore();
   },
   methods: {

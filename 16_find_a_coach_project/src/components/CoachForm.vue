@@ -158,6 +158,7 @@ export default {
         return;
       }
       const data = {
+        id: this.$store.getters.userId,
         firstName: this.firstName.val,
         lastName: this.lastName.val,
         description: this.description.val,

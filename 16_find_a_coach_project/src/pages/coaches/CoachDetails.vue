@@ -85,7 +85,7 @@ export default {
   methods: {
     async getSelectedCoachDetails(id) {
       try {
-        this.selectedCoach = await dataService.getDataById("coaches", id);
+        this.selectedCoach = await dataService.getCoachDetails(id);
         this.isLoading = false;
       } catch (error) {
         this.error = error.message || "Something went wrong!";

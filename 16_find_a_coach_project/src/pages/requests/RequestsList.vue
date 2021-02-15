@@ -45,6 +45,9 @@ export default {
     isLoading() {
       return this.$store.getters["requests/isLoading"];
     },
+    token() {
+      return this.$store.getters.token
+    }
   },
   created() {
     this.updateStore();
@@ -52,7 +55,7 @@ export default {
   methods: {
     async updateStore() {
       try {
-        await this.$store.dispatch("requests/updateStore");
+        await this.$store.dispatch("requests/updateStore", this.token);
       } catch (error) {
         this.error = error.message || "Something went wrong!";
       }

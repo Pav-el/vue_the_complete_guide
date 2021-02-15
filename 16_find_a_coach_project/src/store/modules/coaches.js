@@ -50,7 +50,7 @@ const coachesStore = {
       const coachList = await dataService.getCoaches();
       if (coachList) {
         Object.keys(coachList).forEach((key) =>
-          context.commit("addCoachToStore", { ...coachList[key], id: key })
+          context.commit("addCoachToStore", coachList[key])
         );
       }
       context.commit("setLoadingToFalse");
@@ -67,7 +67,11 @@ const coachesStore = {
     isCoach(_, getters, _2, rootGetters) {
       const coaches = getters.coaches;
       const userId = rootGetters.userId;
-      return coaches.some((coach) => coach.id === userId);
+      return coaches.some((coach) => {
+        console.log("coach.id", coach.id);
+        console.log("userId", userId);
+        return coach.id === userId;
+      });
     },
     isLoading(state) {
       return state.isLoading;
